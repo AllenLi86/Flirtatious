@@ -169,12 +169,15 @@
 								<div class="sidebar_section_content sidebar_color_content mCustomScrollbar"
 									data-mcs-theme="minimal-dark">
 									<ul>
-										<li><a href="categories_dior.html"><span style="background:#a3ccff"></span>Dior</a></li>
+										<li><a href="categories_dior.html"><span
+													style="background:#a3ccff"></span>Dior</a></li>
 										<li><a href="#"><span style="background:#937c6f"></span>Chanel</a></li>
-										<li><a href="categories_YSL.html"><span style="background:#000000"></span>YSL</a></li>
+										<li><a href="categories_YSL.html"><span
+													style="background:#000000"></span>YSL</a></li>
 										<li><a href="#"><span style="background:#ff5c00"></span>Hermes</a></li>
 										<li><a href="#"><span style="background:#a3ffb2"></span>Bobbi Brown</a></li>
-										<li><a href="categories_Gucci.html"><span style="background:#f52832"></span>Gucci</a></li>
+										<li><a href="categories_Gucci.html"><span
+													style="background:#f52832"></span>Gucci</a></li>
 										<li><a href="#"><span style="background:#fdabf4"></span>TomFord</a></li>
 										<li><a href="#"><span style="background:#ecf863"></span>MAC</a></li>
 										<li><a href="#"><span style="background:burlywood; "></span>Burberry</a></li>
@@ -799,6 +802,11 @@
 	<script src="plugins/easing/easing.js"></script>
 	<script src="plugins/parallax-js-master/parallax.min.js"></script>
 
+	<!-- sweetalert2 -->
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<!-- <script src="sweetalert2.all.min.js"></script> -->
+	<script src="https://cdn.jsdelivr.net/npm/promise-polyfill"></script>
+
 	<script>
 		var u = window.sessionStorage;
 		if (u.getItem('name') && u.getItem('password')) {
@@ -1274,7 +1282,7 @@
 						}
 					}
 
-					window.scrollTo({top: 200, behavior: "smooth"});
+					window.scrollTo({ top: 200, behavior: "smooth" });
 
 				})
 
@@ -1303,67 +1311,178 @@
 			for (let i = 0; i < aPList.length; i++) {
 				let aPItem = aPList[i];
 				if (aPItem.productId == id) {
-					var a = confirm("是否要將 " + aPItem.productName + " 加入比較?");
-					// 確認加入比較
-					if (a == true) {
-						// 比較的是香水
-						if (aPItem.categoryId == 3) {
-							if (cp1 == undefined) {
-								cp1 = aPItem.productName;
-								sessionStorage.setItem("cp1", cp1);
-								alert("已將 " + cp1 + " 加入比較!");
-								comNumRefresh("p");
-							} else if (cp2 == undefined) {
-								cp2 = aPItem.productName;
-								sessionStorage.setItem("cp2", cp2);
-								var b = confirm("已將 " + cp1 + " 和 " + cp2 + " 加入比較!\n\n是否要進入比較頁面?");
-								comNumRefresh("p");
-								if (b == true) {
-									comparePagePerfume();
-									window.location.hash = "#product_grid_dior";
+					// var a = confirm("是否要將 " + aPItem.productName + " 加入比較?");
+					Swal.fire({
+						title: `已加入比較!`,
+						text: `${aPItem.productName}`,
+						icon: 'info',
+						showCancelButton: true,
+						confirmButtonText: '確定',
+						cancelButtonText: '取消'
+					}).then(function (result) {
+						if (result.value) {
+							// 確定加入比較
+
+							// 比較的是香水
+							if (aPItem.categoryId == 3) {
+								if (cp1 == undefined) {
+									cp1 = aPItem.productName;
+									sessionStorage.setItem("cp1", cp1);
+									// alert("已將 " + cp1 + " 加入比較!");
+									comNumRefresh("p");
+								} else if (cp2 == undefined) {
+									cp2 = aPItem.productName;
+									sessionStorage.setItem("cp2", cp2);
+									// var b = confirm("已將 " + cp1 + " 和 " + cp2 + " 加入比較!\n\n是否要進入比較頁面?");
+									Swal.fire({
+										title: `是否進入比較頁面?`,
+										text: `${cp1} 和 ${cp2}`,
+										icon: 'info',
+										showCancelButton: true,
+										confirmButtonText: '確定',
+										cancelButtonText: '取消'
+									}).then(function (result) {
+										if (result.value) {
+											comparePagePerfume();
+											window.location.hash = "#product_grid_dior";
+										}
+									})
+									comNumRefresh("p");
+								} else {
+									cp1 = cp2;
+									sessionStorage.setItem("cp1", cp1);
+									cp2 = aPItem.productName;
+									sessionStorage.setItem("cp2", cp2);
+									// var b = confirm("已將 " + cp1 + " 和 " + cp2 + " 加入比較!\n\n是否要進入比較頁面?");
+									Swal.fire({
+										title: `是否進入比較頁面?`,
+										text: `${cp1} 和 ${cp2}`,
+										icon: 'info',
+										showCancelButton: true,
+										confirmButtonText: '確定',
+										cancelButtonText: '取消'
+									}).then(function (result) {
+										if (result.value) {
+											comparePagePerfume();
+											window.location.hash = "#product_grid_dior";
+										}
+									})
+									comNumRefresh("p");
 								}
-							} else {
-								cp1 = cp2;
-								sessionStorage.setItem("cp1", cp1);
-								cp2 = aPItem.productName;
-								sessionStorage.setItem("cp2", cp2);
-								var b = confirm("已將 " + cp1 + " 和 " + cp2 + " 加入比較!\n\n是否要進入比較頁面?");
-								comNumRefresh("p");
-								if (b == true) {
-									comparePagePerfume();
-									window.location.hash = "#product_grid_dior";
+								// 比較的是口紅
+							} else if (aPItem.categoryId == 1) {
+								if (cl1 == undefined) {
+									cl1 = aPItem.productName;
+									sessionStorage.setItem("cl1", cl1);
+									// alert("已將 " + cl1 + " 加入比較!");
+									comNumRefresh("l");
+								} else if (cl2 == undefined) {
+									cl2 = aPItem.productName;
+									sessionStorage.setItem("cl2", cl2);
+									// var b = confirm("已將 " + cl1 + " 和 " + cl2 + " 加入比較!\n\n是否要進入比較頁面?");
+									Swal.fire({
+										title: `是否進入比較頁面?`,
+										text: `${cl1} 和 ${cl2}`,
+										icon: 'info',
+										showCancelButton: true,
+										confirmButtonText: '確定',
+										cancelButtonText: '取消'
+									}).then(function (result) {
+										if (result.value) {
+											comparePageLipstick();
+											window.location.hash = "#product_grid_dior";
+										}
+									})
+									comNumRefresh("l");
+								} else {
+									cl1 = cl2;
+									sessionStorage.setItem("cl1", cl1);
+									cl2 = aPItem.productName;
+									sessionStorage.setItem("cl2", cl2);
+									// var b = confirm("已將 " + cl1 + " 和 " + cl2 + " 加入比較!\n\n是否要進入比較頁面?");
+									Swal.fire({
+										title: `是否進入比較頁面?`,
+										text: `${cl1} 和 ${cl2}`,
+										icon: 'info',
+										showCancelButton: true,
+										confirmButtonText: '確定',
+										cancelButtonText: '取消'
+									}).then(function (result) {
+										if (result.value) {
+											comparePageLipstick();
+											window.location.hash = "#product_grid_dior";
+										}
+									})
+									comNumRefresh("l");
 								}
 							}
-							// 比較的是口紅
-						} else if (aPItem.categoryId == 1) {
-							if (cl1 == undefined) {
-								cl1 = aPItem.productName;
-								sessionStorage.setItem("cl1", cl1);
-								alert("已將 " + cl1 + " 加入比較!");
-								comNumRefresh("l");
-							} else if (cl2 == undefined) {
-								cl2 = aPItem.productName;
-								sessionStorage.setItem("cl2", cl2);
-								var b = confirm("已將 " + cl1 + " 和 " + cl2 + " 加入比較!\n\n是否要進入比較頁面?");
-								comNumRefresh("l");
-								if (b == true) {
-									comparePageLipstick();
-									window.location.hash = "#product_grid_dior";
-								}
-							} else {
-								cl1 = cl2;
-								sessionStorage.setItem("cl1", cl1);
-								cl2 = aPItem.productName;
-								sessionStorage.setItem("cl2", cl2);
-								var b = confirm("已將 " + cl1 + " 和 " + cl2 + " 加入比較!\n\n是否要進入比較頁面?");
-								comNumRefresh("l");
-								if (b == true) {
-									comparePageLipstick();
-									window.location.hash = "#product_grid_dior";
-								}
-							}
+						} else {
+							// 取消比較
+
 						}
-					}
+					})
+					// ----------------------------------------------------------------
+
+					// // 確認加入比較
+					// if (a == true) {
+					// 	// 比較的是香水
+					// 	if (aPItem.categoryId == 3) {
+					// 		if (cp1 == undefined) {
+					// 			cp1 = aPItem.productName;
+					// 			sessionStorage.setItem("cp1", cp1);
+					// 			alert("已將 " + cp1 + " 加入比較!");
+					// 			comNumRefresh("p");
+					// 		} else if (cp2 == undefined) {
+					// 			cp2 = aPItem.productName;
+					// 			sessionStorage.setItem("cp2", cp2);
+					// 			var b = confirm("已將 " + cp1 + " 和 " + cp2 + " 加入比較!\n\n是否要進入比較頁面?");
+					// 			comNumRefresh("p");
+					// 			if (b == true) {
+					// 				comparePagePerfume();
+					// 				window.location.hash = "#product_grid_dior";
+					// 			}
+					// 		} else {
+					// 			cp1 = cp2;
+					// 			sessionStorage.setItem("cp1", cp1);
+					// 			cp2 = aPItem.productName;
+					// 			sessionStorage.setItem("cp2", cp2);
+					// 			var b = confirm("已將 " + cp1 + " 和 " + cp2 + " 加入比較!\n\n是否要進入比較頁面?");
+					// 			comNumRefresh("p");
+					// 			if (b == true) {
+					// 				comparePagePerfume();
+					// 				window.location.hash = "#product_grid_dior";
+					// 			}
+					// 		}
+					// 		// 比較的是口紅
+					// 	} else if (aPItem.categoryId == 1) {
+					// 		if (cl1 == undefined) {
+					// 			cl1 = aPItem.productName;
+					// 			sessionStorage.setItem("cl1", cl1);
+					// 			alert("已將 " + cl1 + " 加入比較!");
+					// 			comNumRefresh("l");
+					// 		} else if (cl2 == undefined) {
+					// 			cl2 = aPItem.productName;
+					// 			sessionStorage.setItem("cl2", cl2);
+					// 			var b = confirm("已將 " + cl1 + " 和 " + cl2 + " 加入比較!\n\n是否要進入比較頁面?");
+					// 			comNumRefresh("l");
+					// 			if (b == true) {
+					// 				comparePageLipstick();
+					// 				window.location.hash = "#product_grid_dior";
+					// 			}
+					// 		} else {
+					// 			cl1 = cl2;
+					// 			sessionStorage.setItem("cl1", cl1);
+					// 			cl2 = aPItem.productName;
+					// 			sessionStorage.setItem("cl2", cl2);
+					// 			var b = confirm("已將 " + cl1 + " 和 " + cl2 + " 加入比較!\n\n是否要進入比較頁面?");
+					// 			comNumRefresh("l");
+					// 			if (b == true) {
+					// 				comparePageLipstick();
+					// 				window.location.hash = "#product_grid_dior";
+					// 			}
+					// 		}
+					// 	}
+					// }
 				}
 			}
 		}
@@ -1416,7 +1535,7 @@
 						<div class="product_content clearfix">
 							<div class="product_info">
 								<div class="product_name"><a href="productId${comItem.productId}.html" style="font-size: 25px;">${comItem.productName}
-										<span class="product_price">$${parseInt(comItem.productPrice/1000)},${comItem.productPrice%1000==0?"000":comItem.productPrice%1000}</span></a></div>
+										<span class="product_price">$${parseInt(comItem.productPrice / 1000)},${comItem.productPrice % 1000 == 0 ? "000" : comItem.productPrice % 1000}</span></a></div>
 
 							</div>							
 							<div class="product_options">
@@ -1515,7 +1634,7 @@
 						<div class="product_content clearfix">
 							<div class="product_info">
 								<div class="product_name"><a href="productId${comItem.productId}.html" style="font-size: 25px;">${comItem.productName}
-										<span class="product_price">$${parseInt(comItem.productPrice/1000)},${comItem.productPrice%1000==0?"000":comItem.productPrice%1000}</span></a></div>
+										<span class="product_price">$${parseInt(comItem.productPrice / 1000)},${comItem.productPrice % 1000 == 0 ? "000" : comItem.productPrice % 1000}</span></a></div>
 
 							</div>
 							<div class="product_options">
@@ -1629,7 +1748,7 @@
 						<div class="product_content clearfix">
 							<div class="product_info">
 								<div class="product_name"><a href="productId${comItem.productId}.html" style="font-size: 25px;">${comItem.productName}
-										<span class="product_price">$${parseInt(comItem.productPrice/1000)},${comItem.productPrice%1000==0?"000":comItem.productPrice%1000}</span></a></div>
+										<span class="product_price">$${parseInt(comItem.productPrice / 1000)},${comItem.productPrice % 1000 == 0 ? "000" : comItem.productPrice % 1000}</span></a></div>
 
 							</div>
 							<div class="product_options">
@@ -1694,7 +1813,7 @@
 						<div class="product_content clearfix">
 							<div class="product_info">
 								<div class="product_name"><a href="productId${comItem.productId}.html" style="font-size: 25px;">${comItem.productName}
-										<span class="product_price">$${parseInt(comItem.productPrice/1000)},${comItem.productPrice%1000==0?"000":comItem.productPrice%1000}</span></a></div>
+										<span class="product_price">$${parseInt(comItem.productPrice / 1000)},${comItem.productPrice % 1000 == 0 ? "000" : comItem.productPrice % 1000}</span></a></div>
 
 							</div>
 							<div class="product_options">
