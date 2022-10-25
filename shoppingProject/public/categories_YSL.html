@@ -207,22 +207,23 @@
 									<div class="filter_price" style="padding-top: 0px; margin-top: 10px;">
 										<div>
 											<h3 style="font-size: 20px;">輸入您的預算!</h3>
-											<input type="number"
+											<input type="number" id="minPrice"
 												style="width: 90px; margin-right: 15px; font-size: 20px;"
-												placeholder="最低價"><span style="font-size: 30px;">~</span><input
-												type="number" style="width: 90px; margin-left: 15px; font-size: 20px;"
+												placeholder="最低價"><span style="font-size: 30px;">~</span>
+											<input type="number" id="maxPrice"
+												style="width: 90px; margin-left: 15px; font-size: 20px;"
 												placeholder="最高價">
 										</div>
 										<br>
 										<div>
-											<input type="radio" id="redstick" name="beauty" value="redstick" checked>
+											<input type="radio" id="redstick" name="beauty" value="1" checked>
 											<label for="stick" style="font-size:15px;">口紅</label>
 
-											<input type="radio" id="perfume" name="beauty" value="perfume"
+											<input type="radio" id="perfume" name="beauty" value="3"
 												style="margin-left: 30px;">
 											<label for="fume" style="font-size:15px;">香水</label>
 
-											<input type="radio" id="bag" name="beauty" value="bag"
+											<input type="radio" id="bag" name="beauty" value="2"
 												style="margin-left: 30px;">
 											<label for="ag" style="font-size:15px;">包包</label>
 										</div>
@@ -949,6 +950,7 @@
 			var YSLStarsList;
 
 			var YSLBagsPriceList;
+			var YSLSortPriceList;
 
 			var currentIndex = -1;
 
@@ -1291,19 +1293,68 @@
 
 				})
 
-				// 價格篩選按鈕
-				$("#clear_price_btn").on("click", function () {
+				// // 價格篩選按鈕
+				// $("#clear_price_btn").on("click", function () {
+				// 	$("#product_grid_YSL").empty();
+
+				// 	var c = $('input[name=beauty]:checked').val();
+				// 	if (c == "bag") {
+				// 		for (let i = 0; i < YSLBagsPriceList.length; i++) {
+				// 			let YSLBagsPriceItem = YSLBagsPriceList[i];
+				// 			let liTemplate =
+				// 				`<!-- Product -->
+				// 				<div class="product">
+				// 					<div class="product_image"><img src="./images/productId${YSLBagsPriceItem.productId}.jpg" alt="productId${YSLBagsPriceItem.productId}"></div>
+				// 					<div class="rating rating_${YSLBagsPriceItem.rating}" data-rating="${YSLBagsPriceItem.rating}">
+				// 						<i class="fa fa-star"></i>
+				// 						<i class="fa fa-star"></i>
+				// 						<i class="fa fa-star"></i>
+				// 						<i class="fa fa-star"></i>
+				// 						<i class="fa fa-star"></i>
+				// 					</div>
+				// 					<div class="product_content clearfix">
+				// 						<div class="product_info">
+				// 							<div class="product_name"><a href="productId${YSLBagsPriceItem.productId}.html">${YSLBagsPriceItem.productName}</a></div>
+				// 							<div class="product_price">$${parseInt(YSLBagsPriceItem.productPrice / 1000)},${YSLBagsPriceItem.productPrice % 1000 == 0 ? "000" : YSLBagsPriceItem.productPrice % 1000}</div>
+				// 						</div>
+				// 						<div class="product_options">
+				// 							<div class="product_buy product_option" onclick="addToCart(${YSLBagsPriceItem.productId})"><img src="images/shopping-bag-white.svg"
+				// 								alt=""></div>
+				// 							<div class="product_fav product_option" onclick="pCompare(${YSLBagsPriceItem.productId})">+</div>
+				// 						</div>
+				// 					</div>
+				// 				</div>`;
+				// 			$("#product_grid_YSL").append(liTemplate);
+				// 		}
+				// 	}
+
+				// 	window.scrollTo({ top: 200, behavior: "smooth" });
+
+				// })
+
+				// 價格篩選按鈕(活)
+				$("#clear_price_btn").on("click", async function () {
 					$("#product_grid_YSL").empty();
 
-					var c = $('input[name=beauty]:checked').val();
-					if (c == "bag") {
-						for (let i = 0; i < YSLBagsPriceList.length; i++) {
-							let YSLBagsPriceItem = YSLBagsPriceList[i];
-							let liTemplate =
-								`<!-- Product -->
+					minPrice = $("#minPrice").val();
+					maxPrice = $("#maxPrice").val();
+					c = $('input[name=beauty]:checked').val();
+
+					var P = $.ajax({
+						type: "get",
+						url: "http://localhost:3000/YSL/priceSort/" + minPrice + "/" + maxPrice + "/" + c,
+					})
+
+					var YSLSortPriceResult = await P;
+					YSLSortPriceList = JSON.parse(YSLSortPriceResult);
+
+					for (let i = 0; i < YSLSortPriceList.length; i++) {
+						let YSLSortPriceItem = YSLSortPriceList[i];
+						let liTemplate =
+							`<!-- Product -->
 								<div class="product">
-									<div class="product_image"><img src="./images/productId${YSLBagsPriceItem.productId}.jpg" alt="productId${YSLBagsPriceItem.productId}"></div>
-									<div class="rating rating_${YSLBagsPriceItem.rating}" data-rating="${YSLBagsPriceItem.rating}">
+									<div class="product_image"><img src="./images/productId${YSLSortPriceItem.productId}.jpg" alt="productId${YSLSortPriceItem.productId}"></div>
+									<div class="rating rating_${YSLSortPriceItem.rating}" data-rating="${YSLSortPriceItem.rating}">
 										<i class="fa fa-star"></i>
 										<i class="fa fa-star"></i>
 										<i class="fa fa-star"></i>
@@ -1312,18 +1363,17 @@
 									</div>
 									<div class="product_content clearfix">
 										<div class="product_info">
-											<div class="product_name"><a href="productId${YSLBagsPriceItem.productId}.html">${YSLBagsPriceItem.productName}</a></div>
-											<div class="product_price">$${parseInt(YSLBagsPriceItem.productPrice / 1000)},${YSLBagsPriceItem.productPrice % 1000 == 0 ? "000" : YSLBagsPriceItem.productPrice % 1000}</div>
-										</div>
+											<div class="product_name"><a href="productId${YSLSortPriceItem.productId}.html">${YSLSortPriceItem.productName}</a></div>
+											<div class="product_price">$${parseInt(YSLSortPriceItem.productPrice / 1000)},${YSLSortPriceItem.productPrice % 1000 == 0 ? "000" : (YSLSortPriceItem.productPrice % 1000 >= 100 ? YSLSortPriceItem.productPrice % 1000 : "0" + YSLSortPriceItem.productPrice % 1000)}</div>
+										</div>										
 										<div class="product_options">
-											<div class="product_buy product_option" onclick="addToCart(${YSLBagsPriceItem.productId})"><img src="images/shopping-bag-white.svg"
+											<div class="product_buy product_option" onclick="addToCart(${YSLSortPriceItem.productId})"><img src="images/shopping-bag-white.svg"
 												alt=""></div>
-											<div class="product_fav product_option" onclick="pCompare(${YSLBagsPriceItem.productId})">+</div>
+											<div class="product_fav product_option" onclick="pCompare(${YSLSortPriceItem.productId})">+</div>
 										</div>
 									</div>
 								</div>`;
-							$("#product_grid_YSL").append(liTemplate);
-						}
+						$("#product_grid_YSL").append(liTemplate);
 					}
 
 					window.scrollTo({ top: 200, behavior: "smooth" });
